@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker & Playlist Generator</title>
+    <style>
+        /* CSS Styling - fulfills HTML/CSS requirements */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .mood-form {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        select, input[type="text"], input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            height: 30px;
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 20px;
+            background: #edf2f7;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .mood-history {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff5f5;
+            border-radius: 8px;
+            border-left: 4px solid #f56565;
+        }
+
+        .playlist {
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .activity-suggestion {
+            background: #fffbf0;
+            border-left: 4px solid #ed8936;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .emoji {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            background: white;
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        #energyValue {
+            font-weight: bold;
+            color: #667eea;
+            margin-left: 10px;
+            font-size: 1.2em;
+        }
+
+        .energy-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Mood Tracker & Playlist Generator</h1>
+        
+        <!-- HTML form with various tags - fulfills HTML requirements -->
+        <div class="mood-form">
+            <h2>How are you feeling today?</h2>
+            
+            <div class="form-group">
+                <label for="mood">Current Mood:</label>
+                <select id="mood">
+                    <option value="">Select your mood</option>
+                    <option value="happy">😊 Happy</option>
+                    <option value="sad">😢 Sad</option>
+                    <option value="energetic">⚡ Energetic</option>
+                    <option value="calm">😌 Calm</option>
+                    <option value="anxious">😰 Anxious</option>
+                    <option value="excited">🤩 Excited</option>
+                    <option value="tired">😴 Tired</option>
+                    <option value="focused">🎯 Focused</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="energy">Energy Level (1-10):</label>
+                <div class="energy-slider-container">
+                    <input type="range" id="energy" min="1" max="10" value="5">
+                    <span id="energyValue">5</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="genre">Preferred Music Genre:</label>
+                <select id="genre">
+                    <option value="pop">🎤 Pop</option>
+                    <option value="rock">🎸 Rock</option>
+                    <option value="jazz">🎷 Jazz</option>
+                    <option value="classical">🎼 Classical</option>
+                    <option value="electronic">🎛️ Electronic</option>
+                    <option value="indie">🎨 Indie</option>
+                    <option value="rnb">🎵 R&B</option>
+                    <option value="country">🤠 Country</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="activity">What are you doing?</label>
+                <input type="text" id="activity" placeholder="e.g., studying, working out, relaxing">
+            </div>
+
+            <button onclick="generateRecommendations()" onmouseover="buttonHover(this)">
+                Generate My Recommendations
+            </button>
+            
+            <button onclick="showMoodHistory()">View Mood History</button>
+            
+            <button onclick="clearHistory()">Clear History</button>
+        </div>
+
+        <!-- Results section that gets updated by JavaScript -->
+        <div id="results" class="results"></div>
+        
+        <div id="moodHistory" class="mood-history" style="display: none;">
+            <h3>Your Mood History</h3>
+            <ul id="historyList"></ul>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript functionality - fulfills all JS requirements
+        
+        // Array to store mood history - fulfills array requirement
+        let moodHistory = [];
+        
+        // Boolean variables for program logic - fulfills boolean requirement
+        let isFirstTime = true;
+        let showingHistory = false;
+        
+        // Object containing playlist data - demonstrates data structures
+        const playlists = {
+            happy: {
+                pop: ["Happy by Pharrell Williams", "Can't Stop the Feeling by Justin Timberlake", "Good 4 U by Olivia Rodrigo"],
+                rock: ["Don't Stop Me Now by Queen", "Walking on Sunshine by Katrina & The Waves", "Mr. Blue Sky by ELO"],
+                electronic: ["Levels by Avicii", "Titanium by David Guetta", "Wake Me Up by Avicii"],
+                jazz: ["Feeling Good by Michael Bublé", "L-O-V-E by Nat King Cole", "Fly Me to the Moon by Frank Sinatra"],
+                classical: ["Ode to Joy by Beethoven", "Spring by Vivaldi", "Eine kleine Nachtmusik by Mozart"],
+                indie: ["Young Folks by Peter Bjorn and John", "Dog Days Are Over by Florence + The Machine", "Electric Feel by MGMT"],
+                rnb: ["Happy by Pharrell Williams", "Good as Hell by Lizzo", "Uptown Funk by Bruno Mars"],
+                country: ["Life is a Highway by Tom Cochrane", "Good Vibrations by Chris Young", "Chicken Fried by Zac Brown Band"]
+            },
+            sad: {
+                pop: ["Someone Like You by Adele", "Fix You by Coldplay", "The Night We Met by Lord Huron"],
+                jazz: ["Blue in Green by Miles Davis", "Summertime by Billie Holiday", "Autumn Leaves by Chet Baker"],
+                indie: ["Mad World by Gary Jules", "Hurt by Johnny Cash", "Black by Pearl Jam"],
+                rock: ["Tears in Heaven by Eric Clapton", "Everybody Hurts by R.E.M.", "Creep by Radiohead"],
+                classical: ["Adagio for Strings by Samuel Barber", "Moonlight Sonata by Beethoven", "Ave Maria by Schubert"],
+                electronic: ["Breathe Me by Sia", "Teardrop by Massive Attack", "Porcelain by Moby"],
+                rnb: ["Stay With Me by Sam Smith", "All of Me by John Legend", "When I Was Your Man by Bruno Mars"],
+                country: ["Whiskey Lullaby by Brad Paisley", "The Dance by Garth Brooks", "Hurt by Johnny Cash"]
+            },
+            energetic: {
+                rock: ["Eye of the Tiger by Survivor", "We Will Rock You by Queen", "Pump It by Black Eyed Peas"],
+                electronic: ["Bangarang by Skrillex", "Animals by Martin Garrix", "Electricity by Dua Lipa"],
+                pop: ["Uptown Funk by Bruno Mars", "Can't Hold Us by Macklemore", "Stronger by Kelly Clarkson"],
+                jazz: ["Sing, Sing, Sing by Benny Goodman", "Caravan by Duke Ellington", "Take the A Train by Duke Ellington"],
+                classical: ["1812 Overture by Tchaikovsky", "Bolero by Ravel", "William Tell Overture by Rossini"],
+                indie: ["Pumped Up Kicks by Foster the People", "Time to Dance by The Sounds", "Tongue Tied by Grouplove"],
+                rnb: ["Crazy in Love by Beyoncé", "Uptown Funk by Bruno Mars", "24K Magic by Bruno Mars"],
+                country: ["Life is a Highway by Tom Cochrane", "Friends in Low Places by Garth Brooks", "Wagon Wheel by Darius Rucker"]
+            },
+            calm: {
+                classical: ["Clair de Lune by Debussy", "Gymnopédie No. 1 by Satie", "The Blue Danube by Strauss"],
+                jazz: ["Kind of Blue by Miles Davis", "Take Five by Dave Brubeck", "Fly Me to the Moon by Frank Sinatra"],
+                indie: ["Holocene by Bon Iver", "Re: Stacks by Bon Iver", "Flightless Bird by Iron & Wine"],
+                electronic: ["Weightless by Marconi Union", "Aqueous Transmission by Incubus", "Porcelain by Moby"],
+                pop: ["Breathe by Taylor Swift", "The Night We Met by Lord Huron", "Vienna by Billy Joel"],
+                rock: ["Dust in the Wind by Kansas", "The Sound of Silence by Simon & Garfunkel", "Wish You Were Here by Pink Floyd"],
+                rnb: ["Stay With Me by Sam Smith", "All of Me by John Legend", "Thinking Out Loud by Ed Sheeran"],
+                country: ["Breathe by Faith Hill", "Blue Eyes Crying in the Rain by Willie Nelson", "The Dance by Garth Brooks"]
+            },
+            anxious: {
+                classical: ["Clair de Lune by Debussy", "Gymnopédie No. 1 by Satie", "Adagio for Strings by Samuel Barber"],
+                jazz: ["Blue in Green by Miles Davis", "Round Midnight by Thelonious Monk", "Autumn Leaves by Bill Evans"],
+                indie: ["Breathe Me by Sia", "Heavy by Linkin Park", "Mad World by Gary Jules"],
+                electronic: ["Weightless by Marconi Union", "Helios by Max Richter", "On Earth as It is in Heaven by Ólafur Arnalds"],
+                pop: ["Breathe by Taylor Swift", "Heavy by Linkin Park", "Scars to Your Beautiful by Alessia Cara"],
+                rock: ["Creep by Radiohead", "Everybody Hurts by R.E.M.", "The Sound of Silence by Disturbed"],
+                rnb: ["Stay With Me by Sam Smith", "All of Me by John Legend", "When I Was Your Man by Bruno Mars"],
+                country: ["Breathe by Faith Hill", "The Dance by Garth Brooks", "Hurt by Johnny Cash"]
+            },
+            excited: {
+                pop: ["Can't Stop the Feeling by Justin Timberlake", "Happy by Pharrell Williams", "Shut Up and Dance by Walk the Moon"],
+                rock: ["Don't Stop Me Now by Queen", "Mr. Blue Sky by ELO", "Walking on Sunshine by Katrina & The Waves"],
+                electronic: ["Levels by Avicii", "Titanium by David Guetta", "Animals by Martin Garrix"],
+                jazz: ["Sing, Sing, Sing by Benny Goodman", "In the Mood by Glenn Miller", "Take the A Train by Duke Ellington"],
+                classical: ["1812 Overture by Tchaikovsky", "William Tell Overture by Rossini", "Flight of the Bumblebee by Rimsky-Korsakov"],
+                indie: ["Young Folks by Peter Bjorn and John", "Electric Feel by MGMT", "Dog Days Are Over by Florence + The Machine"],
+                rnb: ["Crazy in Love by Beyoncé", "Uptown Funk by Bruno Mars", "24K Magic by Bruno Mars"],
+                country: ["Life is a Highway by Tom Cochrane", "Friends in Low Places by Garth Brooks", "Chicken Fried by Zac Brown Band"]
+            },
+            tired: {
+                classical: ["Moonlight Sonata by Beethoven", "Clair de Lune by Debussy", "Gymnopédie No. 1 by Satie"],
+                jazz: ["Kind of Blue by Miles Davis", "Round Midnight by Thelonious Monk", "Blue in Green by Miles Davis"],
+                indie: ["Holocene by Bon Iver", "Skinny Love by Bon Iver", "Flightless Bird by Iron & Wine"],
+                electronic: ["Weightless by Marconi Union", "Porcelain by Moby", "Teardrop by Massive Attack"],
+                pop: ["Vienna by Billy Joel", "The Night We Met by Lord Huron", "Mad World by Gary Jules"],
+                rock: ["Dust in the Wind by Kansas", "Wish You Were Here by Pink Floyd", "The Sound of Silence by Simon & Garfunkel"],
+                rnb: ["Stay With Me by Sam Smith", "All of Me by John Legend", "Thinking Out Loud by Ed Sheeran"],
+                country: ["Blue Eyes Crying in the Rain by Willie Nelson", "The Dance by Garth Brooks", "Breathe by Faith Hill"]
+            },
+            focused: {
+                classical: ["Canon in D by Pachelbel", "Brandenburg Concerto No. 3 by Bach", "Eine kleine Nachtmusik by Mozart"],
+                jazz: ["Take Five by Dave Brubeck", "Kind of Blue by Miles Davis", "Autumn Leaves by Bill Evans"],
+                electronic: ["Music for Airports by Brian Eno", "Helios by Max Richter", "On Earth as It is in Heaven by Ólafur Arnalds"],
+                indie: ["Holocene by Bon Iver", "Re: Stacks by Bon Iver", "Chicago by Sufjan Stevens"],
+                pop: ["Vienna by Billy Joel", "The Scientist by Coldplay", "Mad World by Gary Jules"],
+                rock: ["Comfortably Numb by Pink Floyd", "Stairway to Heaven by Led Zeppelin", "Wish You Were Here by Pink Floyd"],
+                rnb: ["Stay With Me by Sam Smith", "All of Me by John Legend", "Thinking Out Loud by Ed Sheeran"],
+                country: ["The Dance by Garth Brooks", "Blue Eyes Crying in the Rain by Willie Nelson", "Hurt by Johnny Cash"]
+            }
+        };
+
+        // Activities suggestions based on mood and energy
+        const activities = {
+            happy: ["Go for a walk in nature", "Call a friend", "Try a new recipe", "Dance to your favorite songs", "Take photos of things that make you smile", "Write in a gratitude journal"],
+            sad: ["Write in a journal", "Take a warm bath", "Watch a comfort movie", "Practice gentle yoga", "Talk to a trusted friend", "Listen to sad songs and let yourself feel", "Make some tea and read a book"],
+            energetic: ["Go for a run", "Try a HIIT workout", "Organize your space", "Start a creative project", "Go dancing", "Try a new sport", "Clean and redecorate your room"],
+            calm: ["Meditate for 10 minutes", "Read a good book", "Practice deep breathing", "Do some stretching", "Take a nature walk", "Draw or paint", "Practice mindfulness"],
+            anxious: ["Practice deep breathing exercises", "Try progressive muscle relaxation", "Take a mindful walk", "Write down your worries", "Call someone you trust", "Try grounding techniques (5-4-3-2-1)", "Do gentle stretches"],
+            excited: ["Channel energy into exercise", "Start a new project", "Share your excitement with friends", "Go on an adventure", "Try something new", "Dance or move to music", "Plan future activities"],
+            tired: ["Take a power nap", "Go to bed early", "Do gentle stretches", "Take a warm shower", "Practice relaxation techniques", "Avoid caffeine", "Create a cozy environment"],
+            focused: ["Remove distractions", "Use the Pomodoro technique", "Create a to-do list", "Find a quiet workspace", "Take regular breaks", "Stay hydrated", "Play background music"]
+        };
+
+        // Function to update energy level display - fulfills function requirement
+        function updateEnergyDisplay() {
+            const energySlider = document.getElementById('energy');
+            const energyValue = document.getElementById('energyValue');
+            
+            energySlider.addEventListener('input', function() {
+                energyValue.textContent = this.value;
+            });
+        }
+
+        // Function for button hover effect - fulfills event requirement
+        function buttonHover(button) {
+            console.log("Button hovered: " + button.textContent); // fulfills console.log requirement
+        }
+
+        // Main function to generate recommendations - demonstrates complex logic
+        function generateRecommendations() {
+            // Get user input values
+            const mood = document.getElementById('mood').value;
+            const energy = parseInt(document.getElementById('energy').value);
+            const genre = document.getElementById('genre').value;
+            const activity = document.getElementById('activity').value;
+            
+            // Boolean check for required fields - fulfills if/else requirement
+            if (!mood) {
+                alert("Please select your mood first!"); // fulfills alert requirement
+                return;
+            }
+
+            // Create mood entry object
+            const moodEntry = {
+                mood: mood,
+                energy: energy,
+                genre: genre,
+                activity: activity,
+                timestamp: new Date().toLocaleString()
+            };
+
+            // Add to history array - fulfills array manipulation
+            moodHistory.push(moodEntry);
+            
+            console.log("New mood entry added:", moodEntry); // fulfills console.log requirement
+
+            // Generate recommendations using if/else logic
+            let recommendations = generatePlaylistAndActivities(mood, energy, genre);
+            
+            // Display results - fulfills DOM manipulation requirement
+            displayResults(recommendations, mood, energy, activity);
+            
+            // Show first-time user message using boolean logic
+            if (isFirstTime) {
+                setTimeout(() => {
+                    alert("Welcome! Your mood has been tracked. Check your history anytime!");
+                }, 1000);
+                isFirstTime = false;
+            }
+        }
+
+        // Function to generate playlist and activities - demonstrates complex logic with loops
+        function generatePlaylistAndActivities(mood, energy, genre) {
+            let playlist = [];
+            let suggestedActivities = [];
+            
+            // Use if/else to determine playlist - fulfills if/else requirement
+            if (playlists[mood] && playlists[mood][genre]) {
+                playlist = playlists[mood][genre];
+            } else if (playlists[mood]) {
+                // If specific genre not available, get first available genre for mood
+                const availableGenres = Object.keys(playlists[mood]);
+                playlist = playlists[mood][availableGenres[0]];
+            } else {
+                // Default playlist
+                playlist = ["Your favorite songs", "Something that matches your vibe", "Music that makes you feel good"];
+            }
+
+            // Get activity suggestions based on mood
+            if (activities[mood]) {
+                suggestedActivities = activities[mood];
+            }
+
+            // Use loop to filter activities based on energy level - fulfills loop requirement
+            let filteredActivities = [];
+            for (let i = 0; i < suggestedActivities.length; i++) {
+                // Higher energy activities for energy levels 7+
+                if (energy >= 7 && (suggestedActivities[i].includes("run") || suggestedActivities[i].includes("workout") || suggestedActivities[i].includes("organize") || suggestedActivities[i].includes("dancing") || suggestedActivities[i].includes("exercise"))) {
+                    filteredActivities.push(suggestedActivities[i]);
+                }
+                // Lower energy activities for energy levels below 5
+                else if (energy < 5 && (suggestedActivities[i].includes("bath") || suggestedActivities[i].includes("read") || suggestedActivities[i].includes("meditate") || suggestedActivities[i].includes("nap") || suggestedActivities[i].includes("relaxation") || suggestedActivities[i].includes("breathing"))) {
+                    filteredActivities.push(suggestedActivities[i]);
+                }
+                // Medium energy activities for levels 5-6
+                else if (energy >= 5 && energy < 7) {
+                    filteredActivities.push(suggestedActivities[i]);
+                }
+            }
+
+            // If no filtered activities, use all suggestions
+            if (filteredActivities.length === 0) {
+                filteredActivities = suggestedActivities.slice(0, 4); // Limit to first 4 activities
+            }
+
+            return {
+                playlist: playlist,
+                activities: filteredActivities
+            };
+        }
+
+        // Function to display results - fulfills DOM manipulation
+        function displayResults(recommendations, mood, energy, activity) {
+            const resultsDiv = document.getElementById('results');
+            
+            // Get mood emoji
+            const moodEmojis = {
+                happy: "😊",
+                sad: "😢", 
+                energetic: "⚡",
+                calm: "😌",
+                anxious: "😰",
+                excited: "🤩",
+                tired: "😴",
+                focused: "🎯"
+            };
+
+            let resultsHTML = `
+                <h3>${moodEmojis[mood] || "🎵"} Your Personalized Recommendations</h3>
+                
+                <div class="playlist">
+                    <h4>🎵 Suggested Playlist:</h4>
+                    <ul>
+            `;
+            
+            // Use loop to display playlist - fulfills loop requirement
+            for (let i = 0; i < recommendations.playlist.length; i++) {
+                resultsHTML += `<li>🎶 ${recommendations.playlist[i]}</li>`;
+            }
+            
+            resultsHTML += `
+                    </ul>
+                </div>
+                
+                <div class="activity-suggestion">
+                    <h4>💡 Activity Suggestions:</h4>
+                    <ul>
+            `;
+            
+            // Another loop for activities
+            for (let i = 0; i < recommendations.activities.length; i++) {
+                resultsHTML += `<li>✨ ${recommendations.activities[i]}</li>`;
+            }
+            
+            resultsHTML += `
+                    </ul>
+                </div>
+                
+                <p><strong>Current Activity:</strong> ${activity || "Not specified"}</p>
+                <p><strong>Energy Level:</strong> ${energy}/10</p>
+            `;
+            
+            resultsDiv.innerHTML = resultsHTML;
+            resultsDiv.style.display = 'block'; // Show results - fulfills CSS manipulation via JS
+            
+            console.log("Results displayed successfully"); // fulfills console.log requirement
+        }
+
+        // Function to show mood history - uses loops and DOM manipulation
+        function showMoodHistory() {
+            const historyDiv = document.getElementById('moodHistory');
+            const historyList = document.getElementById('historyList');
+            
+            // Boolean toggle for showing/hiding history
+            if (showingHistory) {
+                historyDiv.style.display = 'none';
+                showingHistory = false;
+                return;
+            }
+            
+            // Check if there's any history - fulfills if/else requirement
+            if (moodHistory.length === 0) {
+                alert("No mood history yet! Track your first mood to see history.");
+                return;
+            }
+            
+            let historyHTML = '';
+            
+            // Loop through mood history - fulfills loop requirement
+            for (let i = moodHistory.length - 1; i >= 0; i--) {
+                const entry = moodHistory[i];
+                historyHTML += `
+                    <li>
+                        <strong>${entry.timestamp}</strong><br>
+                        Mood: ${entry.mood} | Energy: ${entry.energy}/10 | Genre: ${entry.genre}<br>
+                        Activity: ${entry.activity || "Not specified"}
+                    </li>
+                `;
+            }
+            
+            historyList.innerHTML = historyHTML;
+            historyDiv.style.display = 'block';
+            showingHistory = true;
+            
+            console.log("Mood history displayed, total entries:", moodHistory.length);
+        }
+
+        // Function to clear history - demonstrates array manipulation
+        function clearHistory() {
+            // Boolean confirmation before clearing
+            const confirmClear = confirm("Are you sure you want to clear all mood history?");
+            
+            if (confirmClear) {
+                moodHistory = []; // Clear array - fulfills array manipulation
+                document.getElementById('moodHistory').style.display = 'none';
+                showingHistory = false;
+                alert("Mood history cleared!");
+                console.log("Mood history has been cleared");
+            }
+        }
+
+        // Initialize the app when page loads - fulfills event handling
+        document.addEventListener('DOMContentLoaded', function() {
+            updateEnergyDisplay();
+            console.log("Mood Tracker app initialized successfully!");
+        });
+
+        // Additional event listeners for enhanced interactivity - fulfills event requirement
+        document.getElementById('mood').addEventListener('change', function() {
+            console.log("Mood selected:", this.value);
+        });
+
+        document.getElementById('genre').addEventListener('change', function() {
+            console.log("Genre selected:", this.value);
+        });
+
+        document.getElementById('activity').addEventListener('input', function() {
+            console.log("Activity updated:", this.value);
+        });
+
+    </script>
+</body>
+</html>
